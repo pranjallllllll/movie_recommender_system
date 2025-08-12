@@ -15,8 +15,6 @@ for filename, file_id in files.items():
         st.write(f"Downloading {filename}...")
         url = f"https://drive.google.com/uc?id={file_id}"
         gdown.download(url, filename, quiet=False)
-    else:
-        st.write(f"{filename} already exists.")
 
 movies_list = pickle.load(open('model.pkl', 'rb'))
 similarity = pickle.load(open('similarity.pkl', 'rb'))
@@ -41,3 +39,4 @@ if st.button('Show Recommendation'):
     recommended_movie_names = recommend(selected_movie_name)
     for name in recommended_movie_names:
         st.text(name)
+
