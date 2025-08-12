@@ -41,12 +41,12 @@ st.markdown(
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-size: 1.5rem;
+        font-size: 1.5rem;   
     }
 
     @media (max-width: 720px) {
         .responsive-title {
-            font-size: 1.2rem !important;
+            font-size: 1.4rem !important;  
         }
     }
     </style>
@@ -56,12 +56,14 @@ st.markdown(
 )
 
 
+
 selected_movie_name = st.selectbox('Pick a movie to get recommendations...', movies['title'].values)
 
 if st.button('Show Recommendation'):
     recommended_movie_names = recommend(selected_movie_name)
     for name in recommended_movie_names:
         st.text(name)
+
 
 
 
