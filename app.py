@@ -31,7 +31,12 @@ def recommend(movie):
     return recommended_movies
 
 # Streamlit UI
-st.title("🎬 Movie Recommender System")
+st.markdown(
+    """
+    <h2 style='text-align: center; color: black;'>🎬 Movie Recommender System</h2>
+    """,
+    unsafe_allow_html=True
+)
 
 selected_movie_name = st.selectbox('Pick a movie to get recommendations...', movies['title'].values)
 
@@ -39,4 +44,5 @@ if st.button('Show Recommendation'):
     recommended_movie_names = recommend(selected_movie_name)
     for name in recommended_movie_names:
         st.text(name)
+
 
