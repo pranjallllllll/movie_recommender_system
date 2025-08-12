@@ -33,10 +33,18 @@ def recommend(movie):
 # Streamlit UI
 st.markdown(
     """
-    <h3 style='font-size: 24px; color: white;'>🎬 Movie Recommender System</h3>
+    <style>
+    .responsive-title {
+        font-size: clamp(24px, 5vw, 40px);
+        font-weight: bold;
+        color: white;
+    }
+    </style>
+    <h1 class="responsive-title">🎬 Movie Recommender System</h1>
     """,
     unsafe_allow_html=True
 )
+
 
 selected_movie_name = st.selectbox('Pick a movie to get recommendations...', movies['title'].values)
 
@@ -44,6 +52,7 @@ if st.button('Show Recommendation'):
     recommended_movie_names = recommend(selected_movie_name)
     for name in recommended_movie_names:
         st.text(name)
+
 
 
 
