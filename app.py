@@ -33,7 +33,7 @@ def recommend(movie):
 # Streamlit UI
 st.markdown(
     """
-    <h2 style='text-align: center; color: black;'>🎬 Movie Recommender System</h2>
+    <h3 style='text-align: center; color: white;'>🎬 Movie Recommender System</h3>
     """,
     unsafe_allow_html=True
 )
@@ -44,5 +44,6 @@ if st.button('Show Recommendation'):
     recommended_movie_names = recommend(selected_movie_name)
     for name in recommended_movie_names:
         st.text(name)
+
 
 
