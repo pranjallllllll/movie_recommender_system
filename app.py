@@ -35,14 +35,17 @@ st.markdown(
     """
     <style>
     .responsive-title {
-        font-size: clamp(24px, 5vw, 40px);
+        font-size: clamp(18px, 4vw, 32px);
         font-weight: bold;
         color: white;
+        margin: 0;
     }
     </style>
     <h1 class="responsive-title">🎬 Movie Recommender System</h1>
     """,
     unsafe_allow_html=True
+)
+
 )
 
 
@@ -52,6 +55,7 @@ if st.button('Show Recommendation'):
     recommended_movie_names = recommend(selected_movie_name)
     for name in recommended_movie_names:
         st.text(name)
+
 
 
 
