@@ -1,12 +1,27 @@
+import os
+import gdown
 import pickle
 import streamlit as st
 
-# Load data
+files = {
+    "model.pkl": "1_aln5OR51Y3wnyjdjvJCMW5uZuvHRhBP",
+    "similarity.pkl": "13aKOoUmbd1l11ichaiW_7hPzkLYDRYIN",
+    "tmdb_5000_credits.csv": "1TxnI11HkLDRDegMvLGbtM_kMtHgWtV2D",
+    "tmdb_5000_movies.csv": "17nlbJvCsQYm6wWKSK9QpsGbE7aQdjMXB"
+}
+
+for filename, file_id in files.items():
+    if not os.path.exists(filename):
+        st.write(f"Downloading {filename}...")
+        url = f"https://drive.google.com/uc?id={file_id}"
+        gdown.download(url, filename, quiet=False)
+    else:
+        st.write(f"{filename} already exists.")
+
 movies_list = pickle.load(open('model.pkl', 'rb'))
 similarity = pickle.load(open('similarity.pkl', 'rb'))
 movies = movies_list
 
-# Recommendation function without posters
 def recommend(movie):
     movie_index = movies[movies['title'] == movie].index[0]
     distances = similarity[movie_index]
