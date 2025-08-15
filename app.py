@@ -49,8 +49,38 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
-# Display posters with responsive layout
-def display_posters_with_titles(names, posters):
+# Streamlit UI with responsive title
+st.markdown(
+    """
+    <style>
+    .responsive-title {
+        font-weight: bold;
+        color: white;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 1.5rem;   
+    }
+    @media (max-width: 720px) {
+        .responsive-title {
+            font-size: 1.4rem !important;  
+        }
+    }
+    </style>
+    <h2 class="responsive-title">🎬 Movie Recommender System</h2>
+    """,
+    unsafe_allow_html=True
+)
+
+selected_movie_name = st.selectbox(
+    'Pick a movie to get recommendations...',
+    movies['title'].values
+)
+
+if st.button('Show Recommendation'):
+    names, posters = recommend(selected_movie_name)
+
     html_content = """
     <style>
     .poster-grid {
@@ -90,6 +120,7 @@ def display_posters_with_titles(names, posters):
     </style>
     <div class="poster-grid">
     """
+
     for name, poster in zip(names, posters):
         html_content += f"""
         <div class="poster-item">
@@ -97,38 +128,7 @@ def display_posters_with_titles(names, posters):
             <div class="poster-title">{name}</div>
         </div>
         """
+
     html_content += "</div>"
+
     st.markdown(html_content, unsafe_allow_html=True)
-
-# Streamlit UI with responsive title
-st.markdown(
-    """
-    <style>
-    .responsive-title {
-        font-weight: bold;
-        color: white;
-        margin: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-size: 1.5rem;   
-    }
-    @media (max-width: 720px) {
-        .responsive-title {
-            font-size: 1.4rem !important;  
-        }
-    }
-    </style>
-    <h2 class="responsive-title">🎬 Movie Recommender System</h2>
-    """,
-    unsafe_allow_html=True
-)
-
-selected_movie_name = st.selectbox(
-    'Pick a movie to get recommendations...',
-    movies['title'].values
-)
-
-if st.button('Show Recommendation'):
-    names, posters = recommend(selected_movie_name)
-    display_posters_with_titles(names, posters)
