@@ -45,5 +45,4 @@ if st.button('Recommend'):
                 poster_url = fetch_poster(movie_id)
                 with col:
                     st.image(poster_url, width=130)
-                    st.markdown(f"<h4 style='text-align:center; font-weight:bold;'>{movie_title}</h4>", unsafe_allow_html=True)
-                    st.markdown("   ")
+                    st.write(movie_title)
