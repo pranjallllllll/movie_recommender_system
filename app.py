@@ -88,4 +88,5 @@ if st.button('Show Recommendation'):
                 f"<p style='text-align:center; font-weight:bold; margin-top:8px;'>{name}</p>",
                 unsafe_allow_html=True
             )
-            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("<br><br>", unsafe_allow_html=True)
+
