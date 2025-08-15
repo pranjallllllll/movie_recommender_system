@@ -23,31 +23,33 @@ movies_list = pickle.load(open('model.pkl', 'rb'))
 similarity = pickle.load(open('similarity.pkl', 'rb'))
 movies = movies_list
 
-# Function to fetch poster from TMDB
+# Fetch movie poster from TMDB
 def fetch_poster(movie_title):
     api_key = "2aa387840c2b9c8e525a08b63027343d"
-    search_url = f"https://api.themoviedb.org/3/search/movie?api_key={api_key}&query={movie_title}"
-    response = requests.get(search_url)
+    url = f"https://api.themoviedb.org/3/search/movie?api_key={api_key}&query={movie_title}"
+    response = requests.get(url)
     data = response.json()
-    if data.get("results"):
-        poster_path = data["results"][0]["poster_path"]
-        return f"https://image.tmdb.org/t/p/w500{poster_path}"
-    return None
+    if data['results']:
+        poster_path = data['results'][0]['poster_path']
+        full_path = f"https://image.tmdb.org/t/p/w500{poster_path}"
+        return full_path
+    return "https://via.placeholder.com/500x750?text=No+Image"
 
-# Recommendation function
+# Recommendation function with posters
 def recommend(movie):
     movie_index = movies[movies['title'] == movie].index[0]
     distances = similarity[movie_index]
-    movies_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
+    movies_list_idx = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
+
     recommended_movies = []
     recommended_posters = []
-    for i in movies_list:
+    for i in movies_list_idx:
         title = movies.iloc[i[0]].title
         recommended_movies.append(title)
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
-# Streamlit UI
+# Streamlit UI with responsive title
 st.markdown(
     """
     <style>
@@ -71,22 +73,15 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Text input instead of selectbox
-selected_movie_name = st.text_input(
-    "Pick a movie to get recommendations...",
-    value="",
+selected_movie_name = st.selectbox(
+    'Pick a movie to get recommendations...',
+    movies['title'].values
 )
 
-# Show recommendations
-if st.button("Show Recommendation") and selected_movie_name:
-    if selected_movie_name in movies['title'].values:
-        names, posters = recommend(selected_movie_name)
-        cols = st.columns(5)
-        for col, name, poster in zip(cols, names, posters):
-            with col:
-                if poster:
-                    st.image(poster, use_container_width=True)
-                st.caption(name)
-    else:
-        st.warning("Movie not found in database.")
-
+if st.button('Show Recommendation'):
+    names, posters = recommend(selected_movie_name)
+    cols = st.columns(5)
+    for col, name, poster in zip(cols, names, posters):
+        with col:
+            st.image(poster, use_container_width=True)
+            st.text(name)
