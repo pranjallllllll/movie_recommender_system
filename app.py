@@ -49,6 +49,57 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
+# Display posters with responsive layout
+def display_posters_with_titles(names, posters):
+    html_content = """
+    <style>
+    .poster-grid {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    .poster-item {
+        text-align: center;
+    }
+    .poster-item img {
+        width: 180px;
+        height: auto;
+        border-radius: 10px;
+    }
+    .poster-title {
+        color: white;
+        font-weight: bold;
+        margin-top: 5px;
+    }
+
+    /* Mobile layout: 3 posters top row, 2 posters centered bottom row */
+    @media (max-width: 768px) {
+        .poster-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            justify-items: center;
+        }
+        .poster-item:nth-child(4) {
+            grid-column: 2; /* Center 4th item in second row */
+        }
+        .poster-item img {
+            width: 100px;
+        }
+    }
+    </style>
+    <div class="poster-grid">
+    """
+    for name, poster in zip(names, posters):
+        html_content += f"""
+        <div class="poster-item">
+            <img src="{poster}" alt="{name}">
+            <div class="poster-title">{name}</div>
+        </div>
+        """
+    html_content += "</div>"
+    st.markdown(html_content, unsafe_allow_html=True)
+
 # Streamlit UI with responsive title
 st.markdown(
     """
@@ -80,8 +131,4 @@ selected_movie_name = st.selectbox(
 
 if st.button('Show Recommendation'):
     names, posters = recommend(selected_movie_name)
-    cols = st.columns(5)
-    for col, name, poster in zip(cols, names, posters):
-        with col:
-            st.image(poster, use_container_width=True)
-            st.markdown(f"<p style='text-align: center; color: white;'>{name}</p>", unsafe_allow_html=True)
+    display_posters_with_titles(names, posters)
