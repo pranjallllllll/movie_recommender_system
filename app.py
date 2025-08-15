@@ -24,7 +24,7 @@ similarity = pickle.load(open('similarity.pkl', 'rb'))
 movies = movies_list
 
 # TMDB API key
-API_KEY = "YOUR_TMDB_API_KEY"  # Replace with your valid TMDB key
+API_KEY = "2aa387840c2b9c8e525a08b63027343d"  # Replace with your valid TMDB key
 
 # Fetch poster function
 def fetch_poster(movie_title):
@@ -84,3 +84,4 @@ if st.button('Show Recommendation'):
         with col:
             st.image(poster, use_container_width=True)
             st.caption(name)
+
