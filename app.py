@@ -49,29 +49,8 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
-# Streamlit UI title
-st.markdown(
-    """
-    <style>
-    .responsive-title {
-        font-weight: bold;
-        color: white;
-        margin: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-size: 1.5rem;   
-    }
-    @media (max-width: 720px) {
-        .responsive-title {
-            font-size: 1.4rem !important;  
-        }
-    }
-    </style>
-    <h2 class="responsive-title">🎬 Movie Recommender System</h2>
-    """,
-    unsafe_allow_html=True
-)
+# Streamlit UI
+st.title('🎬 Movie Recommender System')
 
 selected_movie_name = st.selectbox(
     'Pick a movie to get recommendations...',
@@ -81,55 +60,11 @@ selected_movie_name = st.selectbox(
 if st.button('Show Recommendation'):
     names, posters = recommend(selected_movie_name)
 
-    html_content = """
-    <style>
-    /* PC view - Flex row layout */
-    .poster-grid {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
-    .poster-item {
-        text-align: center;
-    }
-    .poster-item img {
-        width: 180px;
-        height: auto;
-        border-radius: 10px;
-    }
-    .poster-title {
-        color: white;
-        font-weight: bold;
-        margin-top: 5px;
-    }
-
-    /* Mobile: 3 posters first row, 2 posters second row */
-    @media (max-width: 768px) {
-        .poster-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            justify-items: center;
-        }
-        .poster-item:nth-child(4) {
-            grid-column: 2;
-        }
-        .poster-item img {
-            width: 100px;
-        }
-    }
-    </style>
-    <div class="poster-grid">
-    """
-
-    for name, poster in zip(names, posters):
-        html_content += f"""
-        <div class="poster-item">
-            <img src="{poster}" alt="{name}">
-            <div class="poster-title">{name}</div>
-        </div>
-        """
-
-    html_content += "</div>"
-
-    st.markdown(html_content, unsafe_allow_html=True)
+    # Create columns for the posters
+    cols = st.columns(5)
+    
+    for i in range(5):
+        with cols[i]:
+            st.image(posters[i], width=150)
+            st.markdown(f"<div style='text-align: center; color: white; font-weight: bold;'>{names[i]}</div>", 
+                       unsafe_allow_html=True)
