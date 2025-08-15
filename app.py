@@ -1,87 +1,50 @@
-import os
-import gdown
-import pickle
 import streamlit as st
+import pandas as pd
 import requests
+import pickle
 
-# Google Drive file IDs
-files = {
-    "model.pkl": "1_aln5OR51Y3wnyjdjvJCMW5uZuvHRhBP",
-    "similarity.pkl": "13aKOoUmbd1l11ichaiW_7hPzkLYDRYIN",
-    "tmdb_5000_credits.csv": "1TxnI11HkLDRDegMvLGbtM_kMtHgWtV2D",
-    "tmdb_5000_movies.csv": "17nlbJvCsQYm6wWKSK9QpsGbE7aQdjMXB"
-}
+# Load the processed data and similarity matrix
+with open('movie_data.pkl', 'rb') as file:
+    movies, cosine_sim = pickle.load(file)
 
-# Download missing files silently
-for filename, file_id in files.items():
-    if not os.path.exists(filename):
-        url = f"https://drive.google.com/uc?id={file_id}"
-        gdown.download(url, filename, quiet=True)
+# Function to get movie recommendations
+def get_recommendations(title, cosine_sim=cosine_sim):
+    idx = movies[movies['title'] == title].index[0]
+    sim_scores = list(enumerate(cosine_sim[idx]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    sim_scores = sim_scores[1:11]  # Get top 10 similar movies
+    movie_indices = [i[0] for i in sim_scores]
+    return movies[['title', 'movie_id']].iloc[movie_indices]
 
-# Load model and data
-movies_list = pickle.load(open('model.pkl', 'rb'))
-similarity = pickle.load(open('similarity.pkl', 'rb'))
-movies = movies_list
-
-# Fetch movie poster from TMDB
-def fetch_poster(movie_title):
-    api_key = "2aa387840c2b9c8e525a08b63027343d"
-    url = f"https://api.themoviedb.org/3/search/movie?api_key={api_key}&query={movie_title}"
+# Fetch movie poster from TMDB API
+def fetch_poster(movie_id):
+    api_key = '7b995d3c6fd91a2284b4ad8cb390c7b8'  # Replace with your TMDB API key
+    url = f'https://api.themoviedb.org/3/movie/{movie_id}?api_key={api_key}'
     response = requests.get(url)
     data = response.json()
-    if data['results']:
-        poster_path = data['results'][0]['poster_path']
-        full_path = f"https://image.tmdb.org/t/p/w500{poster_path}"
-        return full_path
-    return "https://via.placeholder.com/500x750?text=No+Image"
+    poster_path = data['poster_path']
+    full_path = f"https://image.tmdb.org/t/p/w500{poster_path}"
+    return full_path
 
-# Recommendation function with posters
-def recommend(movie):
-    movie_index = movies[movies['title'] == movie].index[0]
-    distances = similarity[movie_index]
-    movies_list_idx = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1:6]
+# Streamlit UI
+st.title("Movie Recommendation System")
 
-    recommended_movies = []
-    recommended_posters = []
-    for i in movies_list_idx:
-        title = movies.iloc[i[0]].title
-        recommended_movies.append(title)
-        recommended_posters.append(fetch_poster(title))
-    return recommended_movies, recommended_posters
+selected_movie = st.selectbox("Select a movie:", movies['title'].values)
 
-# Streamlit UI with responsive title
-st.markdown(
-    """
-    <style>
-    .responsive-title {
-        font-weight: bold;
-        color: white;
-        margin: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-size: 1.5rem;   
-    }
-    @media (max-width: 720px) {
-        .responsive-title {
-            font-size: 1.4rem !important;  
-        }
-    }
-    </style>
-    <h2 class="responsive-title">🎬 Movie Recommender System</h2>
-    """,
-    unsafe_allow_html=True
-)
+if st.button('Recommend'):
+    recommendations = get_recommendations(selected_movie)
+    st.write("Top 10 recommended movies:")
 
-selected_movie_name = st.selectbox(
-    'Pick a movie to get recommendations...',
-    movies['title'].values
-)
-
-if st.button('Show Recommendation'):
-    names, posters = recommend(selected_movie_name)
-    cols = st.columns(5)
-    for col, name, poster in zip(cols, names, posters):
-        with col:
-            st.image(poster, use_container_width=True)
-            st.text(name)
+    # Create a 2x5 grid layout
+    for i in range(0, 10, 5):  # Loop over rows (2 rows, 5 movies each)
+        cols = st.columns(5)  # Create 5 columns for each row
+        for col, j in zip(cols, range(i, i+5)):
+            if j < len(recommendations):
+                movie_title = recommendations.iloc[j]['title']
+                movie_id = recommendations.iloc[j]['movie_id']
+                poster_url = fetch_poster(movie_id)
+                with col:
+                    st.image(poster_url, width=130)
+                    st.markdown("<br>", unsafe_allow_html=True)  # Gap before title
+                    st.markdown(f"<h5 style='text-align: center; font-weight: bold;'>{movie_title}</h5>", unsafe_allow_html=True)
+                    st.markdown("<br>", unsafe_allow_html=True)  # Gap after title
