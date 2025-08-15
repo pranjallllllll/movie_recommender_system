@@ -68,7 +68,7 @@ st.markdown(
         }
     }
     </style>
-    <h2 class="responsive-title">🎬 Welcome to Pranjal's Movie Recommender System !!</h2>
+    <h4 class="responsive-title">🎬 Welcome to Pranjal's Movie Recommender System !!</h4>
     """,
     unsafe_allow_html=True
 )
@@ -89,5 +89,6 @@ if st.button('Show Recommendation'):
                 unsafe_allow_html=True
             )
             st.markdown("<br><br>", unsafe_allow_html=True)
+
 
 
