@@ -91,6 +91,7 @@ if st.button('Show Recommendation'):
     }
     .poster-item {
         text-align: center;
+        position: relative;
     }
     .poster-item img {
         width: 180px;
@@ -103,7 +104,7 @@ if st.button('Show Recommendation'):
         margin-top: 5px;
     }
 
-    /* Mobile layout: 3 posters top row, 2 posters centered bottom row */
+    /* Mobile layout: 3 posters in first row, 2 in second row */
     @media (max-width: 768px) {
         .poster-grid {
             display: grid;
@@ -111,10 +112,21 @@ if st.button('Show Recommendation'):
             justify-items: center;
         }
         .poster-item:nth-child(4) {
-            grid-column: 2; /* Center 4th item in second row */
+            grid-column: 2; /* center 4th poster in second row */
         }
         .poster-item img {
             width: 100px;
+        }
+        /* Overlay title for mobile */
+        .poster-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-top: 0;
         }
     }
     </style>
