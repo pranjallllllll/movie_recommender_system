@@ -85,7 +85,8 @@ if st.button("Show Recommendation") and selected_movie_name:
         for col, name, poster in zip(cols, names, posters):
             with col:
                 if poster:
-                    st.image(poster, use_column_width=True)
+                    st.image(poster, use_container_width=True)
                 st.caption(name)
     else:
         st.warning("Movie not found in database.")
+
