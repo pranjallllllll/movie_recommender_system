@@ -84,4 +84,4 @@ if st.button('Show Recommendation'):
     for col, name, poster in zip(cols, names, posters):
         with col:
             st.image(poster, use_container_width=True)
-            st.text(name)
+            st.markdown(f"<p style='text-align: center; color: white;'>{name}</p>", unsafe_allow_html=True)
