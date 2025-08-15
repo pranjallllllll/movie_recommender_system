@@ -88,43 +88,70 @@ selected_movie_name = st.selectbox(
 if st.button('Show Recommendation'):
     names, posters = recommend(selected_movie_name)
     
-    # Create responsive layout using columns
+    # CSS for responsive layout
     st.markdown("""
     <style>
+    /* Default desktop layout - 5 columns */
+    .poster-container {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    .poster-item {
+        width: 18%;
+        min-width: 150px;
+        text-align: center;
+    }
+    
     /* Mobile layout - 3 over 2 */
     @media (max-width: 768px) {
-        .poster-columns {
-            display: grid !important;
+        .poster-container {
+            display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
+            padding: 0 5px;
         }
-        .poster-column:nth-child(4) {
+        .poster-item {
+            width: 100% !important;
+        }
+        .poster-item:nth-child(4) {
             grid-column: 2;
         }
-        .poster-column:nth-child(5) {
+        .poster-item:nth-child(5) {
             grid-column: 1 / span 3;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        .poster-img {
-            width: 100% !important;
-        }
+    }
+    
+    .poster-img {
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .poster-title {
+        color: white;
+        font-weight: bold;
+        margin-top: 8px;
+        font-size: 14px;
+        text-align: center;
+        word-wrap: break-word;
     }
     </style>
     """, unsafe_allow_html=True)
     
-    # Create 5 columns (will automatically become 3-over-2 on mobile)
-    cols = st.columns(5)
-    for i in range(5):
-        with cols[i]:
-            st.image(
-                posters[i],
-                width=150,  # Fixed width for desktop
-                use_container_width=True,  # Replaces deprecated use_column_width
-                output_format="auto"
-            )
-            st.markdown(
-                f"<div style='text-align: center; color: white; font-weight: bold;'>{names[i]}</div>",
-                unsafe_allow_html=True
-            )
+    # HTML structure for posters
+    poster_html = """<div class="poster-container">"""
+    for i, (name, poster) in enumerate(zip(names, posters)):
+        poster_html += f"""
+        <div class="poster-item">
+            <img class="poster-img" src="{poster}" 
+                 onerror="this.src='https://via.placeholder.com/150x225?text=Poster+Missing'">
+            <div class="poster-title">{name}</div>
+        </div>
+        """
+    poster_html += "</div>"
+    
+    st.markdown(poster_html, unsafe_allow_html=True)
