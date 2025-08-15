@@ -88,72 +88,43 @@ selected_movie_name = st.selectbox(
 if st.button('Show Recommendation'):
     names, posters = recommend(selected_movie_name)
     
-    # Desktop: 5 columns
+    # Create responsive layout using columns
+    st.markdown("""
+    <style>
+    /* Mobile layout - 3 over 2 */
+    @media (max-width: 768px) {
+        .poster-columns {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .poster-column:nth-child(4) {
+            grid-column: 2;
+        }
+        .poster-column:nth-child(5) {
+            grid-column: 1 / span 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .poster-img {
+            width: 100% !important;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Create 5 columns (will automatically become 3-over-2 on mobile)
     cols = st.columns(5)
     for i in range(5):
         with cols[i]:
             st.image(
-                posters[i], 
+                posters[i],
                 width=150,  # Fixed width for desktop
-                use_column_width='auto'  # Allows responsive behavior
+                use_container_width=True,  # Replaces deprecated use_column_width
+                output_format="auto"
             )
             st.markdown(
-                f"<div style='text-align: center; color: white;'>{names[i]}</div>",
+                f"<div style='text-align: center; color: white; font-weight: bold;'>{names[i]}</div>",
                 unsafe_allow_html=True
             )
-    
-    # Mobile: 3-over-2 layout (hidden on desktop)
-    st.markdown("""
-    <style>
-    @media (max-width: 768px) {
-        /* Hide the desktop layout on mobile */
-        div[data-testid="column"] {
-            display: none !important;
-        }
-        /* Show mobile-specific layout */
-        .mobile-grid {
-            display: grid !important;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .mobile-grid-item:nth-child(4) {
-            grid-column: 2;
-        }
-        .mobile-grid-item:nth-child(5) {
-            grid-column: 1 / span 3;
-            display: flex;
-            justify-content: center;
-        }
-        .mobile-poster {
-            width: 100% !important;
-            border-radius: 8px;
-        }
-        .mobile-title {
-            text-align: center;
-            color: white;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-    }
-    @media (min-width: 769px) {
-        /* Hide mobile layout on desktop */
-        .mobile-grid {
-            display: none !important;
-        }
-    }
-    </style>
-    
-    <div class="mobile-grid">
-    """, unsafe_allow_html=True)
-    
-    # Mobile grid items
-    for i, (name, poster) in enumerate(zip(names, posters)):
-        st.markdown(f"""
-        <div class="mobile-grid-item">
-            <img class="mobile-poster" src="{poster}" onerror="this.src='https://via.placeholder.com/150x225?text=Poster+Missing'">
-            <div class="mobile-title">{name}</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("</div>", unsafe_allow_html=True)
