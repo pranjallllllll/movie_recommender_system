@@ -53,10 +53,13 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
-# Streamlit UI
+# --- NEW STREAMLIT UI ---
+
+# Inject custom CSS for the new UI
 st.markdown(
     """
     <style>
+    /* Main Title Style */
     .responsive-title {
         font-weight: bold;
         color: white;
@@ -64,14 +67,93 @@ st.markdown(
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-size: 1.5rem;   
+        font-size: 1.8rem;
     }
+
+    /* Recommendation Button Style */
+    .stButton>button {
+        background-color: #8B0000; /* Dark Red */
+        color: white;
+        border: 2px solid #8B0000;
+        border-radius: 10px;
+        padding: 10px 24px;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+    }
+    .stButton>button:hover {
+        background-color: transparent;
+        color: #8B0000;
+        border-color: #8B0000;
+    }
+
+    /* Horizontal Carousel Container */
+    .carousel-container {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 20px 10px;
+        margin-top: 20px;
+        scrollbar-width: thin;
+        scrollbar-color: #8B0000 #1E1E1E;
+    }
+    .carousel-container::-webkit-scrollbar {
+        height: 8px;
+    }
+    .carousel-container::-webkit-scrollbar-track {
+        background: #1E1E1E;
+    }
+    .carousel-container::-webkit-scrollbar-thumb {
+        background-color: #8B0000;
+        border-radius: 10px;
+    }
+
+    /* Individual Movie Card */
+    .movie-card {
+        display: inline-block; /* Changed for better alignment */
+        width: 180px;
+        margin: 0 15px;
+        text-align: center;
+        vertical-align: top;
+    }
+    
+    /* Poster container for hover effect */
+    .poster-wrapper {
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease; /* Smooth transition on hover */
+    }
+    .poster-wrapper:hover {
+        transform: scale(1.05); /* Slightly enlarge on hover */
+        box-shadow: 0 0 25px 5px rgba(255, 20, 20, 0.7); /* Neon Red Glow */
+    }
+    .poster-wrapper img {
+        display: block;
+        width: 100%;
+        border-radius: 10px;
+    }
+    
+    /* Movie Title Style */
+    .movie-title {
+        font-weight: bold;
+        color: white;
+        margin-top: 10px;
+        white-space: normal; /* Allow title to wrap */
+        height: 3em; /* Limit title height to approx. 2 lines */
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     @media (max-width: 720px) {
         .responsive-title {
             font-size: 1.4rem !important;  
         }
+        .movie-card {
+            width: 150px;
+            margin: 0 10px;
+        }
     }
     </style>
+
     <h2 class="responsive-title">🎬 Movie Recommender System</h2>
     """,
     unsafe_allow_html=True
@@ -84,12 +166,19 @@ selected_movie_name = st.selectbox(
 
 if st.button('Show Recommendation'):
     names, posters = recommend(selected_movie_name)
-    cols = st.columns(5)
-    for col, name, poster in zip(cols, names, posters):
-        with col:
-            st.image(poster, use_container_width=True)
-            st.markdown(
-                f"<p style='text-align:center; font-weight:bold; margin-top:8px;'>{name}</p>",
-                unsafe_allow_html=True
-            )
-            st.markdown("<br><br>", unsafe_allow_html=True)
+
+    # Building the HTML for the horizontal carousel
+    carousel_html = "<div class='carousel-container'>"
+    for name, poster in zip(names, posters):
+        carousel_html += f"""
+        <div class="movie-card">
+            <div class="poster-wrapper">
+                <img src="{poster}" alt="{name} Poster">
+            </div>
+            <p class="movie-title">{name}</p>
+        </div>
+        """
+    carousel_html += "</div>"
+
+    # Displaying the carousel
+    st.markdown(carousel_html, unsafe_allow_html=True)
