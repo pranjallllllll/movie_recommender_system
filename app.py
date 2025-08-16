@@ -4,6 +4,8 @@ import pickle
 import streamlit as st
 import requests
 
+# --- CORE LOGIC (UNCHANGED) ---
+
 # Google Drive file IDs
 files = {
     "model.pkl": "1_aln5OR51Y3wnyjdjvJCMW5uZuvHRhBP",
@@ -15,8 +17,9 @@ files = {
 # Download missing files once
 for filename, file_id in files.items():
     if not os.path.exists(filename):
-        url = f"https://drive.google.com/uc?id={file_id}"
-        gdown.download(url, filename, quiet=True)
+        with st.spinner(f"Downloading {filename}..."):
+            url = f"https://drive.google.com/uc?id={file_id}"
+            gdown.download(url, filename, quiet=True)
 
 # Load data with caching
 @st.cache_resource
@@ -53,7 +56,8 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
-# --- NEW STREAMLIT UI ---
+
+# --- NEW STREAMLIT UI (PRESENTATION LAYER) ---
 
 # Inject custom CSS for the new UI
 st.markdown(
@@ -63,7 +67,7 @@ st.markdown(
     .responsive-title {
         font-weight: bold;
         color: white;
-        margin: 0;
+        margin-bottom: 20px; /* Added margin for spacing */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -79,11 +83,15 @@ st.markdown(
         padding: 10px 24px;
         font-weight: bold;
         transition: all 0.3s ease-in-out;
+        width: 100%; /* Make button full width */
     }
     .stButton>button:hover {
-        background-color: transparent;
-        color: #8B0000;
+        background-color: #A52A2A; /* Lighter red on hover */
+        color: white;
         border-color: #8B0000;
+    }
+    .stButton>button:active {
+        background-color: #6e0000; /* Even darker red when clicked */
     }
 
     /* Horizontal Carousel Container */
@@ -96,11 +104,13 @@ st.markdown(
         scrollbar-width: thin;
         scrollbar-color: #8B0000 #1E1E1E;
     }
+    /* For Webkit browsers like Chrome, Safari */
     .carousel-container::-webkit-scrollbar {
         height: 8px;
     }
     .carousel-container::-webkit-scrollbar-track {
-        background: #1E1E1E;
+        background: #2E2E2E;
+        border-radius: 10px;
     }
     .carousel-container::-webkit-scrollbar-thumb {
         background-color: #8B0000;
@@ -109,11 +119,12 @@ st.markdown(
 
     /* Individual Movie Card */
     .movie-card {
-        display: inline-block; /* Changed for better alignment */
+        display: inline-block;
         width: 180px;
         margin: 0 15px;
         text-align: center;
         vertical-align: top;
+        flex-shrink: 0; /* Prevent cards from shrinking */
     }
     
     /* Poster container for hover effect */
@@ -141,11 +152,13 @@ st.markdown(
         height: 3em; /* Limit title height to approx. 2 lines */
         overflow: hidden;
         text-overflow: ellipsis;
+        font-size: 0.95rem;
     }
 
+    /* Responsive adjustments */
     @media (max-width: 720px) {
         .responsive-title {
-            font-size: 1.4rem !important;  
+            font-size: 1.5rem !important;  
         }
         .movie-card {
             width: 150px;
@@ -159,26 +172,28 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+# UI Elements
 selected_movie_name = st.selectbox(
     'Pick a movie to get recommendations...',
     movies['title'].values
 )
 
 if st.button('Show Recommendation'):
-    names, posters = recommend(selected_movie_name)
+    with st.spinner('Finding similar movies...'):
+        names, posters = recommend(selected_movie_name)
 
-    # Building the HTML for the horizontal carousel
-    carousel_html = "<div class='carousel-container'>"
-    for name, poster in zip(names, posters):
-        carousel_html += f"""
-        <div class="movie-card">
-            <div class="poster-wrapper">
-                <img src="{poster}" alt="{name} Poster">
+        # Building the HTML for the horizontal carousel dynamically
+        carousel_html = "<div class='carousel-container'>"
+        for name, poster in zip(names, posters):
+            carousel_html += f"""
+            <div class="movie-card">
+                <div class="poster-wrapper">
+                    <img src="{poster}" alt="{name} Poster">
+                </div>
+                <p class="movie-title">{name}</p>
             </div>
-            <p class="movie-title">{name}</p>
-        </div>
-        """
-    carousel_html += "</div>"
+            """
+        carousel_html += "</div>"
 
-    # Displaying the carousel
-    st.markdown(carousel_html, unsafe_allow_html=True)
+        # Displaying the dynamically generated carousel
+        st.markdown(carousel_html, unsafe_allow_html=True)
