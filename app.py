@@ -12,18 +12,23 @@ files = {
     "tmdb_5000_movies.csv": "17nlbJvCsQYm6wWKSK9QpsGbE7aQdjMXB"
 }
 
-# Download missing files silently
+# Download missing files once
 for filename, file_id in files.items():
     if not os.path.exists(filename):
         url = f"https://drive.google.com/uc?id={file_id}"
         gdown.download(url, filename, quiet=True)
 
-# Load model and data
-movies_list = pickle.load(open('model.pkl', 'rb'))
-similarity = pickle.load(open('similarity.pkl', 'rb'))
-movies = movies_list
+# Load data with caching
+@st.cache_resource
+def load_data():
+    movies_list = pickle.load(open('model.pkl', 'rb'))
+    similarity = pickle.load(open('similarity.pkl', 'rb'))
+    return movies_list, similarity
 
-# Fetch movie poster from TMDB
+movies, similarity = load_data()
+
+# Fetch movie poster (cached)
+@st.cache_data
 def fetch_poster(movie_title):
     api_key = "2aa387840c2b9c8e525a08b63027343d"
     url = f"https://api.themoviedb.org/3/search/movie?api_key={api_key}&query={movie_title}"
@@ -31,11 +36,10 @@ def fetch_poster(movie_title):
     data = response.json()
     if data['results']:
         poster_path = data['results'][0]['poster_path']
-        full_path = f"https://image.tmdb.org/t/p/w500{poster_path}"
-        return full_path
+        return f"https://image.tmdb.org/t/p/w500{poster_path}"
     return "https://via.placeholder.com/500x750?text=No+Image"
 
-# Recommendation function with posters
+# Recommendation function
 def recommend(movie):
     movie_index = movies[movies['title'] == movie].index[0]
     distances = similarity[movie_index]
@@ -49,7 +53,7 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
-# Streamlit UI with responsive title
+# Streamlit UI
 st.markdown(
     """
     <style>
@@ -89,8 +93,3 @@ if st.button('Show Recommendation'):
                 unsafe_allow_html=True
             )
             st.markdown("<br><br>", unsafe_allow_html=True)
-
-
-
-
-
