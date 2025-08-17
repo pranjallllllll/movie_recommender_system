@@ -113,10 +113,16 @@ if st.button('Show Recommendation'):
     cols = st.columns(5)
     for col, name, poster in zip(cols, names, posters):
         with col:
-            st.image(poster, use_container_width=True)
+            # --- THIS IS THE ONLY PART THAT HAS BEEN CHANGED ---
+            # We combine the poster and title into one markdown block to apply the CSS.
             st.markdown(
-                f"<p style='text-align:center; font-weight:bold; margin-top:8px;'>{name}</p>",
+                f"""
+                <div class="poster-container">
+                    <img class="poster-img" src="{poster}" alt="{name} Poster">
+                </div>
+                <p style='text-align:center; font-weight:bold; margin-top:8px;'>{name}</p>
+                <br><br>
+                """,
                 unsafe_allow_html=True
             )
-            st.markdown("<br><br>", unsafe_allow_html=True)
-
+            # --- END OF THE CHANGE ---
