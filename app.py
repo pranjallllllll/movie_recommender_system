@@ -67,7 +67,7 @@ st.markdown(
         color: white;
         background-color: #FF4500;
         border: none;
-        padding: 8px 10px; /* Reduced vertical padding to match search bar height */
+        padding: 8px 15px; /* Reduced vertical padding to match search bar height */
         text-align: center;
         text-decoration: none;
         display: inline-block;
@@ -145,5 +145,6 @@ if st.button('Recommend'):
                 """,
                 unsafe_allow_html=True
             )
+
 
 
