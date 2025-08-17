@@ -53,10 +53,15 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
-# --- CHANGE 1: THE CSS IS UPDATED HERE ---
+# --- THE CHANGE FOR THE BLACK BACKGROUND IS IN THIS SECTION ---
 st.markdown(
     """
     <style>
+    /* This new rule makes the background pitch black */
+    .stApp {
+        background-color: #000000;
+    }
+
     .responsive-title {
         font-weight: bold;
         color: white;
@@ -77,16 +82,12 @@ st.markdown(
         position: relative;
         border-radius: 7px;
         overflow: hidden;
-        /* This makes the zoom and glow effects smooth */
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .poster-container:hover {
-        /* This creates the red neon glow */
         box-shadow: 0 0 25px rgba(229, 9, 20, 0.8);
-        /* This makes the poster zoom in */
         transform: scale(1.05);
-        /* This ensures the glowing poster appears on top of others */
         z-index: 10;
     }
 
@@ -112,8 +113,6 @@ if st.button('Show Recommendation'):
     cols = st.columns(5)
     for col, name, poster in zip(cols, names, posters):
         with col:
-            # --- CHANGE 2: THE POSTER DISPLAY LOGIC IS UPDATED HERE ---
-            # We replace st.image() with st.markdown to apply our custom CSS classes.
             st.markdown(
                 f"""
                 <div class="poster-container">
@@ -124,4 +123,3 @@ if st.button('Show Recommendation'):
                 """,
                 unsafe_allow_html=True
             )
-            # --- END OF THE CHANGE ---
