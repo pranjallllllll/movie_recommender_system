@@ -53,11 +53,11 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
-# --- THE CHANGE FOR THE BLACK BACKGROUND IS IN THIS SECTION ---
+# --- THE GLOW COLOR IS CHANGED IN THIS SECTION ---
 st.markdown(
     """
     <style>
-    /* This new rule makes the background pitch black */
+    /* This rule makes the background pitch black */
     .stApp {
         background-color: #000000;
     }
@@ -86,7 +86,8 @@ st.markdown(
     }
 
     .poster-container:hover {
-        box-shadow: 0 0 25px rgba(229, 9, 20, 0.8);
+        /* THIS LINE HAS BEEN CHANGED FROM RED TO BLUE */
+        box-shadow: 0 0 25px rgba(0, 123, 255, 0.9);
         transform: scale(1.05);
         z-index: 10;
     }
