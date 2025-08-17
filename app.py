@@ -53,7 +53,7 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
-# --- CSS FOR BUTTON AND UI IS UPDATED HERE ---
+# --- CSS IS UPDATED IN THIS SECTION ---
 st.markdown(
     """
     <style>
@@ -67,23 +67,23 @@ st.markdown(
         color: white;
         background-color: #FF4500;
         border: none;
-        padding: 8px 15px; /* Reduced vertical padding to match search bar height */
+        padding: 8px 20px; /* Adjusted horizontal padding for a good look */
         text-align: center;
         text-decoration: none;
         display: inline-block;
         font-size: 16px;
         font-weight: bold;
-        margin-top: 10px; /* Added margin for spacing */
+        margin-top: 5px; /* REDUCED top margin for less space */
         cursor: pointer;
         border-radius: 8px;
-        width: 100%;
-        transition: background-color 0.3s ease; /* Smooth transition for hover */
+        /* REMOVED width: 100% to make the button fit its content */
+        transition: background-color 0.3s ease;
     }
 
-    /* NEW: This rule defines the button's style when you hover over it */
+    /* This rule defines the button's style when you hover over it */
     .stButton>button:hover {
         background-color: #E03E00; /* A slightly darker orange on hover */
-        color: white; /* Ensure text color stays white */
+        color: white;
     }
     
     .responsive-title {
@@ -130,6 +130,7 @@ selected_movie_name = st.selectbox(
     movies['title'].values
 )
 
+## --- CHANGED BUTTON TEXT FROM "Show Recommendation" TO "Recommend" ---
 if st.button('Recommend'):
     names, posters = recommend(selected_movie_name)
     cols = st.columns(5)
@@ -145,6 +146,3 @@ if st.button('Recommend'):
                 """,
                 unsafe_allow_html=True
             )
-
-
-
