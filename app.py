@@ -67,7 +67,7 @@ st.markdown(
         color: white;
         background-color: #FF4500;
         border: none;
-        padding: 8px 24px; /* Reduced vertical padding to match search bar height */
+        padding: 8px 15px; /* Reduced vertical padding to match search bar height */
         text-align: center;
         text-decoration: none;
         display: inline-block;
@@ -130,7 +130,7 @@ selected_movie_name = st.selectbox(
     movies['title'].values
 )
 
-if st.button('Show Recommendation'):
+if st.button('Recommend'):
     names, posters = recommend(selected_movie_name)
     cols = st.columns(5)
     for col, name, poster in zip(cols, names, posters):
@@ -145,3 +145,4 @@ if st.button('Show Recommendation'):
                 """,
                 unsafe_allow_html=True
             )
+
