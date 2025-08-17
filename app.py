@@ -53,13 +53,30 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
-# Streamlit UI with Red Glow, Zoom, and Black Background
+# --- THE ORANGE BUTTON STYLE IS ADDED IN THIS SECTION ---
 st.markdown(
     """
     <style>
-    /* This rule makes the background pitch black */
+    /* Main background */
     .stApp {
         background-color: #000000;
+    }
+
+    /* CSS FOR THE ORANGE BUTTON */
+    .stButton>button {
+        color: white;
+        background-color: #FF4500; /* This is a vibrant orange color */
+        border: none;
+        padding: 12px 24px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px; /* Rounded corners */
+        width: 100%; /* Make the button span the full width */
     }
 
     .responsive-title {
@@ -77,21 +94,18 @@ st.markdown(
         }
     }
 
-    /* CSS FOR THE POSTER GLOW AND ZOOM EFFECT */
+    /* Poster hover effects */
     .poster-container {
         position: relative;
         border-radius: 7px;
         overflow: hidden;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
     .poster-container:hover {
-        /* The glow color is set back to red */
         box-shadow: 0 0 25px rgba(229, 9, 20, 0.8);
         transform: scale(1.05);
         z-index: 10;
     }
-
     .poster-img {
         width: 100%;
         height: auto;
