@@ -53,7 +53,7 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
-# --- THE ORANGE BUTTON STYLE IS ADDED IN THIS SECTION ---
+# --- CSS FOR BUTTON AND UI IS UPDATED HERE ---
 st.markdown(
     """
     <style>
@@ -65,20 +65,27 @@ st.markdown(
     /* CSS FOR THE ORANGE BUTTON */
     .stButton>button {
         color: white;
-        background-color: #FF4500; /* This is a vibrant orange color */
+        background-color: #FF4500;
         border: none;
-        padding: 12px 24px;
+        padding: 8px 24px; /* Reduced vertical padding to match search bar height */
         text-align: center;
         text-decoration: none;
         display: inline-block;
         font-size: 16px;
         font-weight: bold;
-        margin: 4px 2px;
+        margin-top: 10px; /* Added margin for spacing */
         cursor: pointer;
-        border-radius: 8px; /* Rounded corners */
-        width: 100%; /* Make the button span the full width */
+        border-radius: 8px;
+        width: 100%;
+        transition: background-color 0.3s ease; /* Smooth transition for hover */
     }
 
+    /* NEW: This rule defines the button's style when you hover over it */
+    .stButton>button:hover {
+        background-color: #E03E00; /* A slightly darker orange on hover */
+        color: white; /* Ensure text color stays white */
+    }
+    
     .responsive-title {
         font-weight: bold;
         color: white;
