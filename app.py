@@ -53,10 +53,11 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
-# Streamlit UI
+# Streamlit UI with non-resizing poster glow effect
 st.markdown(
     """
     <style>
+    /* --- Your Original CSS for the Title --- */
     .responsive-title {
         font-weight: bold;
         color: white;
@@ -71,7 +72,32 @@ st.markdown(
             font-size: 1.4rem !important;  
         }
     }
+
+    /* --- ADDED CSS FOR THE POSTER GLOW EFFECT (NO RESIZING) --- */
+    .poster-container {
+        position: relative; /* Needed for z-index to work */
+        border-radius: 7px;
+        overflow: hidden;
+        /* The transition now only applies to the box-shadow, not the transform */
+        transition: box-shadow 0.3s ease;
+    }
+
+    .poster-container:hover {
+        /* This is the line that creates the red neon glow */
+        box-shadow: 0 0 25px rgba(229, 9, 20, 0.8);
+        /* This ensures the glow appears on top of adjacent posters */
+        z-index: 10;
+        /* The transform: scale(1.05) has been REMOVED to prevent resizing */
+    }
+
+    .poster-img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
     </style>
+    
+    <!-- Your original title HTML remains unchanged -->
     <h2 class="responsive-title">🎬 Movie Recommender System</h2>
     """,
     unsafe_allow_html=True
@@ -93,3 +119,4 @@ if st.button('Show Recommendation'):
                 unsafe_allow_html=True
             )
             st.markdown("<br><br>", unsafe_allow_html=True)
+
