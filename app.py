@@ -53,11 +53,10 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(title))
     return recommended_movies, recommended_posters
 
-# Streamlit UI with non-resizing poster glow effect
+# --- CHANGE 1: THE CSS IS UPDATED HERE ---
 st.markdown(
     """
     <style>
-    /* --- Your Original CSS for the Title --- */
     .responsive-title {
         font-weight: bold;
         color: white;
@@ -73,21 +72,22 @@ st.markdown(
         }
     }
 
-    /* --- ADDED CSS FOR THE POSTER GLOW EFFECT (NO RESIZING) --- */
+    /* CSS FOR THE POSTER GLOW AND ZOOM EFFECT */
     .poster-container {
-        position: relative; /* Needed for z-index to work */
+        position: relative;
         border-radius: 7px;
         overflow: hidden;
-        /* The transition now only applies to the box-shadow, not the transform */
-        transition: box-shadow 0.3s ease;
+        /* This makes the zoom and glow effects smooth */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .poster-container:hover {
-        /* This is the line that creates the red neon glow */
+        /* This creates the red neon glow */
         box-shadow: 0 0 25px rgba(229, 9, 20, 0.8);
-        /* This ensures the glow appears on top of adjacent posters */
+        /* This makes the poster zoom in */
+        transform: scale(1.05);
+        /* This ensures the glowing poster appears on top of others */
         z-index: 10;
-        /* The transform: scale(1.05) has been REMOVED to prevent resizing */
     }
 
     .poster-img {
@@ -97,7 +97,6 @@ st.markdown(
     }
     </style>
     
-    <!-- Your original title HTML remains unchanged -->
     <h2 class="responsive-title">🎬 Movie Recommender System</h2>
     """,
     unsafe_allow_html=True
@@ -113,8 +112,8 @@ if st.button('Show Recommendation'):
     cols = st.columns(5)
     for col, name, poster in zip(cols, names, posters):
         with col:
-            # --- THIS IS THE ONLY PART THAT HAS BEEN CHANGED ---
-            # We combine the poster and title into one markdown block to apply the CSS.
+            # --- CHANGE 2: THE POSTER DISPLAY LOGIC IS UPDATED HERE ---
+            # We replace st.image() with st.markdown to apply our custom CSS classes.
             st.markdown(
                 f"""
                 <div class="poster-container">
